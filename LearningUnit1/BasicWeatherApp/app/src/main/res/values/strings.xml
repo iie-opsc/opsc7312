@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Basic Weather App</string>
+    <string name="accuweather_logo">AccuWeather logo</string>
 </resources>
