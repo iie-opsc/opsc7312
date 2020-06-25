@@ -11,8 +11,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
      */
     class FetchWeatherData extends AsyncTask<URL, Void, String> {
 
+        private ArrayList<Forecast> fiveDaylList = new ArrayList<Forecast>();
+        private static final String LOGGING_TAG = "weatherDATA";
+
         @Override
         protected String doInBackground(URL... urls) {
             URL weatherURL = urls[0];
@@ -60,9 +68,55 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String weatherData) {
             if (weatherData != null) {
-                tvWeather.setText(weatherData);
+                consumeJson(weatherData);
             }
             super.onPostExecute(weatherData);
+        }
+
+        protected void consumeJson(String weatherJSON) {
+            if (fiveDaylList != null) {
+                fiveDaylList.clear();
+            }
+
+            if (weatherJSON != null) {
+                try {
+                    // get the root JSON object
+                    JSONObject rootWeatherData = new JSONObject(weatherJSON);
+                    // find the daily forecasts array
+                    JSONArray fiveDayForecast = rootWeatherData.getJSONArray("DailyForecasts");
+
+                    // get data from each entry in the array
+                    for (int i = 0 ; i < fiveDayForecast.length(); i++) {
+                        Forecast forecastObject = new Forecast();
+
+                        JSONObject dailyWeather = fiveDayForecast.getJSONObject(i);
+
+                        // get date
+                        String date = dailyWeather.getString("Date");
+                        Log.i(LOGGING_TAG, "consumeJson: Date" + date);
+                        forecastObject.setDate(date);
+
+                        // get minimum temperature
+                        JSONObject temperatureObject = dailyWeather.getJSONObject("Temperature");
+                        JSONObject minTempObject = temperatureObject.getJSONObject("Minimum");
+                        String minTemp = minTempObject.getString("Value");
+                        Log.i(LOGGING_TAG, "consumeJson: minTemp" + minTemp);
+                        forecastObject.setMinimumTemperature(minTemp);
+
+                        // get maximum temperature
+                        JSONObject maxTempObject = temperatureObject.getJSONObject("Maximum");
+                        String maxTemp = maxTempObject.getString("Value");
+                        Log.i(LOGGING_TAG, "consumeJson: maxTemp" + maxTemp);
+                        forecastObject.setMaximumTemperature(maxTemp);
+
+                        fiveDaylList.add(forecastObject);
+
+                        tvWeather.append("Date: " + date + " Min: " + minTemp + " Max: " + maxTemp + "\n");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
