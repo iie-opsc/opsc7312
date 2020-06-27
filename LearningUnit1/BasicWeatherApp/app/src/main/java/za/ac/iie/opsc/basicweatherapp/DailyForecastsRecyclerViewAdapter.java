@@ -7,19 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import za.ac.iie.opsc.basicweatherapp.dummy.DummyContent.DummyItem;
+import za.ac.iie.opsc.basicweatherapp.model.DailyForecasts;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem}.
+ * {@link RecyclerView.Adapter} that can display a {@link za.ac.iie.opsc.basicweatherapp.model.DailyForecasts}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class DailyForecastsRecyclerViewAdapter extends RecyclerView.Adapter<DailyForecastsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<DailyForecasts> mValues;
 
-    public DailyForecastsRecyclerViewAdapter(List<DummyItem> items) {
+    public DailyForecastsRecyclerViewAdapter(List<DailyForecasts> items) {
         mValues = items;
     }
 
@@ -32,9 +32,13 @@ public class DailyForecastsRecyclerViewAdapter extends RecyclerView.Adapter<Dail
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        DailyForecasts item = mValues.get(position);
+        holder.mItem = item;
+        holder.tvDate.setText(item.getDate());
+        holder.tvMinimum.setText(item.getTemperature().getMinimum().getValue() +
+                        " " + item.getTemperature().getMinimum().getUnit());
+        holder.tvMaximum.setText(item.getTemperature().getMaximum().getValue() +
+                " " + item.getTemperature().getMaximum().getUnit());
     }
 
     @Override
@@ -44,20 +48,22 @@ public class DailyForecastsRecyclerViewAdapter extends RecyclerView.Adapter<Dail
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView tvDate;
+        public final TextView tvMinimum;
+        public final TextView tvMaximum;
+        public DailyForecasts mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            tvDate = (TextView) view.findViewById(R.id.tv_date);
+            tvMinimum = (TextView) view.findViewById(R.id.tv_minimum);
+            tvMaximum = (TextView) view.findViewById(R.id.tv_maximum);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + tvDate.getText() + "'";
         }
     }
 }

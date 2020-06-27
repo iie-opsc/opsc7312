@@ -1,6 +1,7 @@
 package za.ac.iie.opsc.basicweatherapp;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,7 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import za.ac.iie.opsc.basicweatherapp.dummy.DummyContent;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.net.URL;
+
+import za.ac.iie.opsc.basicweatherapp.model.Root;
 
 /**
  * A fragment representing a list of Items.
@@ -23,6 +29,7 @@ public class DailyForecastsFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private RecyclerView weatherDataList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -64,8 +71,48 @@ public class DailyForecastsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new DailyForecastsRecyclerViewAdapter(DummyContent.ITEMS));
+            weatherDataList = recyclerView;
+            URL url = NetworkUtil.buildURLForWeather();
+            new FetchWeatherData().execute(url);
         }
         return view;
+    }
+
+    /**
+     * Asynchronous task that requests weather data.
+     */
+    class FetchWeatherData extends AsyncTask<URL, Void, String> {
+
+        private static final String LOGGING_TAG = "weatherDATA";
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            URL weatherURL = urls[0];
+            String weatherData = null;
+            try {
+                weatherData =
+                        NetworkUtil.getResponseFromHttpUrl(weatherURL);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return weatherData;
+        }
+
+        @Override
+        protected void onPostExecute(String weatherData) {
+            if (weatherData != null) {
+                consumeJson(weatherData);
+            }
+            super.onPostExecute(weatherData);
+        }
+
+        protected void consumeJson(String weatherJSON) {
+            if (weatherJSON != null) {
+                Gson gson = new Gson();
+                Root weatherData = gson.fromJson(weatherJSON, Root.class);
+                weatherDataList.setAdapter(new DailyForecastsRecyclerViewAdapter(
+                        weatherData.getDailyForecasts()));
+            }
+        }
     }
 }
