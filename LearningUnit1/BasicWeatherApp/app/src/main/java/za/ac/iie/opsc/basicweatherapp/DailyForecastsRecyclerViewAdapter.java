@@ -34,7 +34,7 @@ public class DailyForecastsRecyclerViewAdapter extends RecyclerView.Adapter<Dail
     public void onBindViewHolder(final ViewHolder holder, int position) {
         DailyForecasts item = mValues.get(position);
         holder.mItem = item;
-        holder.tvDate.setText(item.getDate());
+        holder.tvDate.setText(item.getDate().substring(0, 10));
         holder.tvMinimum.setText(item.getTemperature().getMinimum().getValue() +
                         " " + item.getTemperature().getMinimum().getUnit());
         holder.tvMaximum.setText(item.getTemperature().getMaximum().getValue() +
