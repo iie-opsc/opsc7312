@@ -33,16 +33,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView ivAccuWeather = findViewById(R.id.iv_accuweather);
-        ivAccuWeather.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://www.accuweather.com/"));
-                startActivity(intent);
-            }
-        });
-
         tvWeather = findViewById(R.id.tv_weather);
 
         URL url = NetworkUtil.buildURLForWeather();
