@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import za.ac.iie.opsc.geoweather.CurrentWeatherFragment;
 import za.ac.iie.opsc.geoweather.DailyForecastsFragment;
 import za.ac.iie.opsc.geoweather.R;
 
@@ -40,6 +41,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position)
         {
+            case 0:
+                return new CurrentWeatherFragment();
             case 1:
                 return new DailyForecastsFragment();
             default:

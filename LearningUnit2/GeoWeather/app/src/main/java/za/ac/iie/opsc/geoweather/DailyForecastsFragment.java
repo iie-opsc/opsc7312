@@ -121,4 +121,10 @@ public class DailyForecastsFragment extends Fragment {
         weatherDataList.setAdapter(new DailyForecastsRecyclerViewAdapter(
                 fiveDayForecast.getDailyForecasts()));
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+    }
 }

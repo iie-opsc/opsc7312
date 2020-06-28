@@ -4,4 +4,6 @@
     <string name="tab_text_2">5-DAY FORECAST</string>
     <string name="tab_text_3">CITY WEATHER</string>
     <string name="accuweather_logo">AccuWeather logo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
