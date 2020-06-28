@@ -42,6 +42,10 @@ public class DailyForecastsFragment extends Fragment {
     private IAccuWeather weatherService;
     private CompositeDisposable compositeDisposable;
 
+    private static final String ARG_LOCATION_KEY = "locationKey";
+
+    private String locationKey;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -54,10 +58,12 @@ public class DailyForecastsFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static DailyForecastsFragment newInstance(int columnCount) {
+    public static DailyForecastsFragment newInstance(int columnCount,
+                                                     String locationKey) {
         DailyForecastsFragment fragment = new DailyForecastsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putString(ARG_LOCATION_KEY, locationKey);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,6 +74,7 @@ public class DailyForecastsFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            locationKey = getArguments().getString(ARG_LOCATION_KEY);
         }
     }
 
@@ -90,7 +97,7 @@ public class DailyForecastsFragment extends Fragment {
             // Make the call using Retrofit and RxJava
             compositeDisposable.add(weatherService.getFiveDayForecast
                     (
-                            "305605",
+                            locationKey,
                             BuildConfig.ACCUWEATHER_API_KEY,
                             true)
                     .subscribeOn(Schedulers.io())
