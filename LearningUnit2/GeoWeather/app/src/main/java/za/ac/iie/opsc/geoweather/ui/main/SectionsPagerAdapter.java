@@ -47,7 +47,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         switch (position)
         {
             case 0:
-                return new CurrentWeatherFragment();
+                return CurrentWeatherFragment.newInstance(locationName, locationKey);
             case 1:
                 return new DailyForecastsFragment();
             default:
