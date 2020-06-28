@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Geo Weather</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_1">TODAY</string>
+    <string name="tab_text_2">5-DAY FORECAST</string>
+    <string name="tab_text_3">CITY WEATHER</string>
     <string name="accuweather_logo">AccuWeather logo</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import za.ac.iie.opsc.geoweather.DailyForecastsFragment;
 import za.ac.iie.opsc.geoweather.R;
 
 /**
@@ -16,8 +17,10 @@ import za.ac.iie.opsc.geoweather.R;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+    // Using string resources, add the three tabs here
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2};
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1,
+            R.string.tab_text_2, R.string.tab_text_3};
     private final Context mContext;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
@@ -25,11 +28,23 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         mContext = context;
     }
 
+    /**
+     * Get the fragment to use for each position.
+     * 0 = Today's Weather
+     * 1 = Five Day Forecast
+     * 2 = City Weather
+     * @param position
+     * @return The fragment to display in each position.
+     */
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return PlaceholderFragment.newInstance(position + 1);
+        switch (position)
+        {
+            case 1:
+                return new DailyForecastsFragment();
+            default:
+                return PlaceholderFragment.newInstance(position + 1);
+        }
     }
 
     @Nullable
@@ -40,7 +55,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 2 total pages.
-        return 2;
+        // Show 3 total pages
+        return 3;
     }
 }
