@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.URL;
 
-import za.ac.iie.opsc.geoweather.model.Root;
+import za.ac.iie.opsc.geoweather.model.FiveDayForecast;
 
 
 /**
@@ -109,7 +109,7 @@ public class DailyForecastsFragment extends Fragment {
         protected void consumeJson(String weatherJSON) {
             if (weatherJSON != null) {
                 Gson gson = new Gson();
-                Root weatherData = gson.fromJson(weatherJSON, Root.class);
+                FiveDayForecast weatherData = gson.fromJson(weatherJSON, FiveDayForecast.class);
                 weatherDataList.setAdapter(new DailyForecastsRecyclerViewAdapter(
                         weatherData.getDailyForecasts()));
             }

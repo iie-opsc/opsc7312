@@ -2,7 +2,7 @@ package za.ac.iie.opsc.geoweather.model;
 
 import java.util.List;
 
-public class Root {
+public class FiveDayForecast {
     private Headline Headline;
 
     private List<DailyForecasts> DailyForecasts;
