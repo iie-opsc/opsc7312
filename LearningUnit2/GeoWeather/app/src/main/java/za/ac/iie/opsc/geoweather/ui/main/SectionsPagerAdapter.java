@@ -23,10 +23,15 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1,
             R.string.tab_text_2, R.string.tab_text_3};
     private final Context mContext;
+    private final String locationName;
+    private final String locationKey;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm,
+                                String locationName, String locationKey) {
         super(fm);
         mContext = context;
+        this.locationName = locationName;
+        this.locationKey = locationKey;
     }
 
     /**

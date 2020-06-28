@@ -8,6 +8,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 import za.ac.iie.opsc.geoweather.model.FiveDayForecast;
 import za.ac.iie.opsc.geoweather.model.currentweather.CurrentWeather;
+import za.ac.iie.opsc.geoweather.model.location.AccuWeatherLocation;
 
 public interface IAccuWeather {
     /**
@@ -32,5 +33,16 @@ public interface IAccuWeather {
     @GET("currentconditions/v1/{locationKey}")
     Observable<List<CurrentWeather>> getCurrentConditions(
             @Path("locationKey") String locationKey,
+            @Query("apikey") String apiKey);
+
+    /**
+     * Gets the location data based on the geoposition.
+     * @param geoposition The geoposition as latitude,longitude
+     * @param apiKey The api key to use
+     * @return The location data for the geoposition
+     */
+    @GET("locations/v1/cities/geoposition/search")
+    Observable<AccuWeatherLocation> getLocationByPosition(
+            @Query("q") String geoposition,
             @Query("apikey") String apiKey);
 }

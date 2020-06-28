@@ -3,6 +3,7 @@ package za.ac.iie.opsc.geoweather;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -26,11 +27,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
+import za.ac.iie.opsc.geoweather.model.FiveDayForecast;
+import za.ac.iie.opsc.geoweather.model.location.AccuWeatherLocation;
+import za.ac.iie.opsc.geoweather.retrofit.IAccuWeather;
+import za.ac.iie.opsc.geoweather.retrofit.RetrofitClient;
 import za.ac.iie.opsc.geoweather.ui.main.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private IAccuWeather weatherService;
+    private CompositeDisposable compositeDisposable;
+
+    public MainActivity() {
+        compositeDisposable = new CompositeDisposable();
+        Retrofit retrofit = RetrofitClient.getRetrofit();
+        weatherService = retrofit.create(IAccuWeather.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,21 +131,49 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                Log.i("LocationResult", "onLocationResult: " +
-                        locationResult.getLastLocation());
+                Location location = locationResult.getLastLocation();
+                Log.i("LocationResult", "onLocationResult: " + location);
 
-                // TODO: Get the locationKey from AccuWeater
-
-                SectionsPagerAdapter sectionsPagerAdapter =
-                        new SectionsPagerAdapter(
-                                MainActivity.this,
-                                getSupportFragmentManager());
-                ViewPager viewPager = findViewById(R.id.view_pager);
-                viewPager.setAdapter(sectionsPagerAdapter);
-                TabLayout tabs = findViewById(R.id.tabs);
-                tabs.setupWithViewPager(viewPager);
+                // Make the call using Retrofit and RxJava
+                compositeDisposable.add(weatherService.getLocationByPosition(
+                        location.getLatitude() + "," +
+                        location.getLongitude(),
+                        BuildConfig.ACCUWEATHER_API_KEY)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<AccuWeatherLocation>()
+                {
+                    @Override
+                    public void accept(AccuWeatherLocation location) throws Exception {
+                        displayData(location);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception
+                    {
+                        Log.d("MYERROR", "accept: " + throwable.getMessage());
+                    }
+                }));
             }
         };
         return locationCallback;
+    }
+
+    private void displayData(AccuWeatherLocation location) {
+        SectionsPagerAdapter sectionsPagerAdapter =
+                new SectionsPagerAdapter(MainActivity.this,
+                        getSupportFragmentManager(),
+                        location.getLocalizedName(),
+                        location.getKey());
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        TabLayout tabs = findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
     }
 }
