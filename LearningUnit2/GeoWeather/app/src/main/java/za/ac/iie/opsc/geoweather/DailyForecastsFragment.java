@@ -3,6 +3,7 @@ package za.ac.iie.opsc.geoweather;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,14 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.URL;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
 import za.ac.iie.opsc.geoweather.model.FiveDayForecast;
+import za.ac.iie.opsc.geoweather.retrofit.IAccuWeather;
+import za.ac.iie.opsc.geoweather.retrofit.RetrofitClient;
 
 
 /**
@@ -31,11 +39,17 @@ public class DailyForecastsFragment extends Fragment {
     private int mColumnCount = 1;
     private RecyclerView weatherDataList;
 
+    private IAccuWeather weatherService;
+    private CompositeDisposable compositeDisposable;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public DailyForecastsFragment() {
+        compositeDisposable = new CompositeDisposable();
+        Retrofit retrofit = RetrofitClient.getRetrofit();
+        weatherService = retrofit.create(IAccuWeather.class);
     }
 
     // TODO: Customize parameter initialization
@@ -72,47 +86,39 @@ public class DailyForecastsFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             weatherDataList = recyclerView;
-            URL url = NetworkUtil.buildURLForWeather();
-            new FetchWeatherData().execute(url);
+
+            // Make the call using Retrofit and RxJava
+            compositeDisposable.add(weatherService.getFiveDayForecast
+                    (
+                            "305605",
+                            BuildConfig.ACCUWEATHER_API_KEY,
+                            true)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<FiveDayForecast>()
+                    {
+                        @Override
+                        public void accept(FiveDayForecast forecast) throws Exception {
+                            displayData(forecast);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception
+                        {
+                            Log.d("MYERROR", "accept: " + throwable.getMessage());
+                        }
+                    }));
         }
         return view;
     }
 
     /**
-     * Asynchronous task that requests weather data.
+     * Display the data from the FiveDayForcast by creating a view adapter
+     * and setting it onto the RecyclerView.
+     * @param fiveDayForecast The forecast to display.
      */
-    class FetchWeatherData extends AsyncTask<URL, Void, String> {
-
-        private static final String LOGGING_TAG = "weatherDATA";
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            URL weatherURL = urls[0];
-            String weatherData = null;
-            try {
-                weatherData =
-                        NetworkUtil.getResponseFromHttpUrl(weatherURL);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return weatherData;
-        }
-
-        @Override
-        protected void onPostExecute(String weatherData) {
-            if (weatherData != null) {
-                consumeJson(weatherData);
-            }
-            super.onPostExecute(weatherData);
-        }
-
-        protected void consumeJson(String weatherJSON) {
-            if (weatherJSON != null) {
-                Gson gson = new Gson();
-                FiveDayForecast weatherData = gson.fromJson(weatherJSON, FiveDayForecast.class);
-                weatherDataList.setAdapter(new DailyForecastsRecyclerViewAdapter(
-                        weatherData.getDailyForecasts()));
-            }
-        }
+    private void displayData(FiveDayForecast fiveDayForecast) {
+        weatherDataList.setAdapter(new DailyForecastsRecyclerViewAdapter(
+                fiveDayForecast.getDailyForecasts()));
     }
 }
