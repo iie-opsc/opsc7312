@@ -3,6 +3,7 @@ package za.ac.iie.opsc.geoweather;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -22,8 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Looper;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -32,7 +31,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
-import za.ac.iie.opsc.geoweather.model.FiveDayForecast;
 import za.ac.iie.opsc.geoweather.model.location.AccuWeatherLocation;
 import za.ac.iie.opsc.geoweather.retrofit.IAccuWeather;
 import za.ac.iie.opsc.geoweather.retrofit.RetrofitClient;
@@ -59,14 +57,17 @@ public class MainActivity extends AppCompatActivity {
                 LocationServices.getFusedLocationProviderClient(this);
         checkPermissionsAndRequestLocation();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab_share);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action",
-                        Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                View rootview = getWindow().getDecorView().getRootView();
+                Bitmap currentScreenshot = ProcessImageUtil.takeScreenshot(rootview);
+                ProcessImageUtil.storeScreenshot(MainActivity.this,
+                        currentScreenshot,"Weather Today");
+                ProcessImageUtil.pushToInstagram(MainActivity.this,
+                        "/Weather Today");
             }
         });
     }
