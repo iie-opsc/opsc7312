@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import za.ac.iie.opsc.geoweather.CityWeatherFragment;
 import za.ac.iie.opsc.geoweather.CurrentWeatherFragment;
 import za.ac.iie.opsc.geoweather.DailyForecastsFragment;
 import za.ac.iie.opsc.geoweather.R;
@@ -51,7 +52,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return DailyForecastsFragment.newInstance(1, locationKey);
             default:
-                return PlaceholderFragment.newInstance(position + 1);
+                return new CityWeatherFragment();
         }
     }
 
