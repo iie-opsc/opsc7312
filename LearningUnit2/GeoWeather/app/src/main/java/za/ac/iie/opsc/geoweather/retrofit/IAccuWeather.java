@@ -45,4 +45,13 @@ public interface IAccuWeather {
     Observable<AccuWeatherLocation> getLocationByPosition(
             @Query("q") String geoposition,
             @Query("apikey") String apiKey);
+
+    /**
+     * Get the location information for the top 150 cities worldide.
+     * @param apiKey The API key to use.
+     * @return A list of 150 top cities.
+     */
+    @GET("locations/v1/topcities/150")
+    Observable<List<AccuWeatherLocation>> getTop150Cities(
+            @Query("apikey") String apiKey);
 }

@@ -5,7 +5,7 @@ public class TimeZone {
 
     private String Name;
 
-    private int GmtOffset;
+    private float GmtOffset;
 
     private boolean IsDaylightSaving;
 
@@ -23,10 +23,10 @@ public class TimeZone {
     public String getName(){
         return this.Name;
     }
-    public void setGmtOffset(int GmtOffset){
+    public void setGmtOffset(float GmtOffset){
         this.GmtOffset = GmtOffset;
     }
-    public int getGmtOffset(){
+    public float getGmtOffset(){
         return this.GmtOffset;
     }
     public void setIsDaylightSaving(boolean IsDaylightSaving){
