@@ -5,21 +5,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import za.ac.iie.opsc.fakestagram.dummy.DummyContent.DummyItem;
+import za.ac.iie.opsc.fakestagram.model.ImageModel;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem}.
+ * {@link RecyclerView.Adapter} that can display a {@link ImageModel}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyLocalImagesViewRecyclerViewAdapter extends RecyclerView.Adapter<MyLocalImagesViewRecyclerViewAdapter.ViewHolder> {
+public class MyLocalImagesViewRecyclerViewAdapter extends
+        RecyclerView.Adapter<MyLocalImagesViewRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<ImageModel> mValues;
 
-    public MyLocalImagesViewRecyclerViewAdapter(List<DummyItem> items) {
+    public MyLocalImagesViewRecyclerViewAdapter(List<ImageModel> items) {
         mValues = items;
     }
 
@@ -33,8 +36,8 @@ public class MyLocalImagesViewRecyclerViewAdapter extends RecyclerView.Adapter<M
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mDescriptionView.setText(mValues.get(position).getImageName());
+        holder.mImageView.setImageBitmap(mValues.get(position).getImageBitmap());
     }
 
     @Override
@@ -44,20 +47,20 @@ public class MyLocalImagesViewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView mDescriptionView;
+        public final ImageView mImageView;
+        public ImageModel mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mDescriptionView = view.findViewById(R.id.txt_view_image_name);
+            mImageView = view.findViewById(R.id.img_view_image_pane);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mDescriptionView.getText() + "'";
         }
     }
 }

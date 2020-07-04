@@ -11,8 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import za.ac.iie.opsc.fakestagram.database.DatabaseHandler;
 import za.ac.iie.opsc.fakestagram.dummy.DummyContent;
+import za.ac.iie.opsc.fakestagram.model.ImageModel;
 
 /**
  * A fragment representing a list of Items.
@@ -23,6 +28,8 @@ public class LocalImagesViewFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private RecyclerView recyclerView;
+    private DatabaseHandler imageDb;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,14 +65,33 @@ public class LocalImagesViewFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyLocalImagesViewRecyclerViewAdapter(DummyContent.ITEMS));
+            imageDb = new DatabaseHandler(getContext());
+            getData();
         }
         return view;
+    }
+
+    private void getData() {
+        try {
+            ArrayList<ImageModel> images = imageDb.readDisplayImages();
+            if (images != null) {
+                MyLocalImagesViewRecyclerViewAdapter photoViewAdapter =
+                        new MyLocalImagesViewRecyclerViewAdapter(images);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                recyclerView.setAdapter(photoViewAdapter);
+            } else {
+                Toast.makeText(getContext(), "No Images found", Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (Exception e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -2,13 +2,16 @@ package za.ac.iie.opsc.fakestagram.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 
 import za.ac.iie.opsc.fakestagram.model.ImageModel;
@@ -71,6 +74,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         catch (Exception e) {
             Log.i("SAVE TO DB ", "storeImageLocal: " +e.getMessage());
+        }
+    }
+
+    /**
+     * Reads the list of images from the database.
+     * @return An ArrayList of ImageModel objects.
+     */
+    public ArrayList<ImageModel> readDisplayImages() {
+        try {
+            SQLiteDatabase imagDatabase = this.getReadableDatabase();
+            ArrayList<ImageModel>dbImages = new ArrayList<>();
+            Cursor cursor = imagDatabase.rawQuery("select * from imageStore",
+                    null);
+
+            if(cursor.getCount() != 0) {
+                while(cursor.moveToNext()) {
+                    String imageName = cursor.getString(0);
+                    byte [] image = cursor.getBlob(1);
+
+                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(image,
+                            0, image.length);
+
+                    dbImages.add(new ImageModel(imageName,imageBitmap));
+                }
+                Toast.makeText(context, "Loading Images",
+                        Toast.LENGTH_SHORT).show();
+                return  dbImages;
+            }
+            else  {
+                Toast.makeText(context, "No Images Found ",
+                        Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        }
+        catch (Exception e) {
+            Log.i("SAVE TO DB ", "storeImageLocal: " +e.getMessage());
+            return null;
         }
     }
 }
