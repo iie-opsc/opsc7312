@@ -19,21 +19,21 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btn_view"
             android:layout_width="197dp"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/smalleye"
             android:text="View"
-            android:textSize="30sp" />
+            android:textSize="30sp"/>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/smallbriefcase"
             android:text="Add"
-            android:textSize="30sp" />
+            android:textSize="30sp"/>
     </LinearLayout>
 
     <LinearLayout
