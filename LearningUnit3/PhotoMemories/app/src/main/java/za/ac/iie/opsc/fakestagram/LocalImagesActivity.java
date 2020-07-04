@@ -12,6 +12,8 @@ public class LocalImagesActivity extends AppCompatActivity {
 
     private LocalImagesStoreFragment storeFragment =
             new LocalImagesStoreFragment();
+    private LocalImagesViewFragment viewFragment =
+            new LocalImagesViewFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,18 @@ public class LocalImagesActivity extends AppCompatActivity {
                 FragmentTransaction transaction = manager.beginTransaction();
 
                 transaction.replace(R.id.local_image_place_holder, storeFragment);
+                transaction.commitAllowingStateLoss();
+            }
+        });
+
+        Button viewButton = findViewById(R.id.btn_view);
+        viewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+
+                transaction.replace(R.id.local_image_place_holder, viewFragment);
                 transaction.commitAllowingStateLoss();
             }
         });
