@@ -28,7 +28,6 @@
         android:layout_marginEnd="50dp"
         android:layout_marginBottom="50dp"
         android:drawableTop="@drawable/cloud"
-        android:enabled="false"
         android:text="@string/cloud_images"
         android:textSize="30sp" />
 </LinearLayout>
