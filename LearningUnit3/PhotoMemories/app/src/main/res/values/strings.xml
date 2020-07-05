@@ -20,4 +20,6 @@
     <string name="welcome">Welcome to FakeStagram!</string>
     <string name="add">Add</string>
     <string name="view">View</string>
+    <string name="chooseimage">Choose Image</string>
+    <string name="save">Save</string>
 </resources>

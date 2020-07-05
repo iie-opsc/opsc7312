@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/small_polaroid"
-            android:text="Choose Image"
+            android:text="@string/chooseimage"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/small_save"
-            android:text="Save"
+            android:text="@string/save"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
