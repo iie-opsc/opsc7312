@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="za.ac.iie.opsc.fakestagram.MainChoiceFragment"
+        android:name="za.ac.iie.opsc.fakestagram.LoginFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
