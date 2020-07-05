@@ -33,6 +33,8 @@ public class LoginFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private OnCompleteListener<AuthResult> onCompleteListener;
+
     private FirebaseAuth authentication;
     private EditText etEmailAddress;
     private EditText etPassword;
@@ -100,6 +102,27 @@ public class LoginFragment extends Fragment {
                         });
             }
         });
+
+        Button loginButton = view.findViewById(R.id.btn_login);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String userName = etEmailAddress.getText().toString().trim();
+                String passWord = etPassword.getText().toString().trim();
+                authentication.signInWithEmailAndPassword(userName,passWord)
+                        .addOnCompleteListener(onCompleteListener);
+            }
+        });
+
         return view;
+    }
+
+    /**
+     * Sets the listener to call when login completes.
+     * @param onCompleteListener The listener to call.
+     */
+    public void setOnCompleteListener(
+            OnCompleteListener<AuthResult> onCompleteListener) {
+        this.onCompleteListener = onCompleteListener;
     }
 }
