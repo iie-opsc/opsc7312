@@ -23,9 +23,17 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+
+import za.ac.iie.opsc.fakestagram.model.ImageModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +52,12 @@ public class CloudImagesStoreFragment extends Fragment {
     private Uri imageData;
     private ImageView imageView;
     private EditText etImageName;
+    private StorageReference storageRef;
+    private FirebaseUser currentUser;
+    private FirebaseAuth authentication;
+
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef = database.getReference("PhotoMemories");
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -97,6 +111,17 @@ public class CloudImagesStoreFragment extends Fragment {
             }
         });
 
+        storageRef = FirebaseStorage.getInstance().getReference("PhotoMemories");
+        authentication = FirebaseAuth.getInstance();
+
+        Button saveButton = view.findViewById(R.id.btn_save_cloud);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                storeImage();
+            }
+        });
+
         return view;
     }
 
@@ -119,6 +144,63 @@ public class CloudImagesStoreFragment extends Fragment {
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
             imageView.setImageBitmap(imageToStore);
+        }
+    }
+
+    private String getFileExtensions(Uri uri) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
+    public void storeImage() {
+        try {
+            if (imageData != null) {
+                // upload the image to storage
+                final StorageReference fileRef = storageRef.child(
+                        System.currentTimeMillis() + "." +
+                        getFileExtensions(imageData));
+
+                UploadTask uploadTask = fileRef.putFile(imageData);
+
+                Task<Uri> urlTask = uploadTask.continueWithTask(
+                        new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
+                            throws Exception {
+                        return fileRef.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()) {
+                            // write an entry to realtime database
+                            currentUser = authentication.getCurrentUser();
+                            final String storedImageUri = task.getResult().toString();
+
+                            ImageModel imageModel = new ImageModel(
+                                    etImageName.getText().toString().trim(),
+                                    storedImageUri);
+                            String uploadID = myRef.push().getKey();
+                            myRef.child(currentUser.getUid()).
+                                    child(uploadID).setValue(imageModel);
+
+                            Toast.makeText(getContext(),
+                                    "Photo loaded to the cloud :-)",
+                                    Toast.LENGTH_SHORT).show();
+
+                            // reset the user interface
+                            imageView.setImageResource(R.drawable.photo);
+                            etImageName.setText("");
+                        }
+                    }
+                });
+            } else {
+                Toast.makeText(getContext(), "Please select an Image ",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }
