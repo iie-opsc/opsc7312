@@ -18,4 +18,6 @@
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="welcome">Welcome to FakeStagram!</string>
+    <string name="add">Add</string>
+    <string name="view">View</string>
 </resources>

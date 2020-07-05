@@ -23,8 +23,8 @@
             android:layout_width="197dp"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/smalleye"
-            android:text="View"
-            android:textSize="30sp"/>
+            android:text="@string/view"
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/btn_add"
@@ -32,8 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/smallbriefcase"
-            android:text="Add"
-            android:textSize="30sp"/>
+            android:text="@string/add"
+            android:textSize="30sp" />
     </LinearLayout>
 
     <LinearLayout
